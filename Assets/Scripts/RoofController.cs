@@ -10,7 +10,7 @@ public class RoofController : MonoBehaviour
             Vector2 point = collision.contacts[1].normal;
             if (point.ToString() == Vector2.up.ToString())
             {
-                Debug.Log("Collision up");
+                //Debug.Log("Collision up");
                 //collision.collider.isTrigger = true;
             }
         }

@@ -1,15 +1,17 @@
 ﻿using UnityEngine;
 using System.Collections;
-
 public class PlayerController : MonoBehaviour
 {
     private float speed = 1f;
     private Rigidbody2D mrigidbody;
     private bool touchGround = true;
-    private bool alive = true;
+    public bool alive = true;
     private Animator animator;
     public static PlayerController Instance;
+    public float moveH;
+    private float nextJump;
 
+    public int gemCount, lifeCount;
     // Use this for initialization
     void Start()
     {
@@ -17,15 +19,22 @@ public class PlayerController : MonoBehaviour
         mrigidbody = GetComponent<Rigidbody2D>();
         animator = GetComponent<Animator>();
         Debug.Log("Screen: "+(float)Screen.width /Screen.height);
+        gemCount = 0;
+        lifeCount = 0;
 
     }
 
     // Update is called once per frame
     void Update()
     {
-
         //Movement
         PayerWalk();
+        if (!alive) //Die
+        {
+            gameObject.GetComponent<BoxCollider2D>().isTrigger = true;
+            PlayerJump();
+            //StartCoroutine(restart());
+        }
 
     }
 
@@ -33,7 +42,7 @@ public class PlayerController : MonoBehaviour
     {
 
         //Jumping
-        if (Input.GetKeyDown(KeyCode.J) || Input.GetKeyDown(KeyCode.Space))
+        if (Input.GetKeyDown(KeyCode.J) || Input.GetKeyDown(KeyCode.Space) || JumpingController.Instance.getBoolJump())
         {
             PlayerJump();
         }
@@ -49,10 +58,11 @@ public class PlayerController : MonoBehaviour
             if (getSide(coll) == 2 || getSide(coll) == 4)
             {
                 //Ma sat = 0
+                //touchGround = false;
             }
             else if (getSide(coll) == 1) // Neu o ben trn ground thì dc phep jump
             {
-                gameObject.GetComponent<BoxCollider2D>().isTrigger = false;
+                //gameObject.GetComponent<BoxCollider2D>().isTrigger = false;
                 touchGround = true;
             }
 
@@ -66,8 +76,7 @@ public class PlayerController : MonoBehaviour
         if (coll.gameObject.tag == "Enemi")
         {
             alive = false;
-            PlayerJump();
-            gameObject.GetComponentInChildren<BoxCollider2D>().isTrigger = true;
+            
         }
     }
 
@@ -76,7 +85,7 @@ public class PlayerController : MonoBehaviour
     {
         if (collision.gameObject.tag == "Ground")
         {
-            touchGround = true;
+            //touchGround = true;
         }
     }
     // Deny jumping when exit the ground
@@ -84,7 +93,7 @@ public class PlayerController : MonoBehaviour
     {
         if (collision.gameObject.tag == "Ground")
         {
-            touchGround = false;
+            //touchGround = false;
         }
     }
 
@@ -94,14 +103,37 @@ public class PlayerController : MonoBehaviour
         {
             Destroy(other.gameObject);
         }
+        if (other.gameObject.tag == "Dinamon")
+        {
+            gemCount++;
+            Destroy(other.gameObject);
+        }
+        if (other.gameObject.tag == "Life")
+        {
+            lifeCount++;
+            Destroy(other.gameObject);
+        }
     }
 
 
     //Handle walking of player
     public void PayerWalk()
     {
-        float moveH = Input.GetAxis("Horizontal");
-        Debug.Log("move H: "+moveH);
+
+        if (SystemInfo.deviceType == DeviceType.Desktop)
+        {
+
+            moveH = Input.GetAxis("Horizontal");
+        }
+        else
+        {
+            //Debug.Log("move H: "+moveH);
+            moveH = MoveBack.Instance.getDirection() + MoveForward.Instance.getDirection();
+
+        }
+        
+
+       // Vector2 direction = MovingGamePad.Instance.getDirection();
         if (moveH != 0.0f)
         {
             animator.SetBool("isWalk", true);
@@ -110,16 +142,22 @@ public class PlayerController : MonoBehaviour
         {
             animator.SetBool("isWalk", false);
         }
+
         mrigidbody.velocity = new Vector3(moveH * speed, mrigidbody.velocity.y, 0.0f);
     }
 
     //Handle jumpping of player
     public void PlayerJump()
     {
-        if (touchGround)
+        if (Time.time > nextJump)
         {
-            touchGround = false;
-            mrigidbody.AddForce(Vector2.up * 170);
+            nextJump = Time.time + 0.2f;
+        if (touchGround)
+            {
+                touchGround = false;
+                mrigidbody.AddForce(Vector2.up * 170);
+            }
+
         }
     }
 
@@ -148,6 +186,13 @@ public class PlayerController : MonoBehaviour
             return 1; //top
         }
         return 0;
+    }
+
+    //Restart
+    IEnumerator restart()
+    {
+        yield return new WaitForSeconds(1f);
+        Application.LoadLevel(Application.loadedLevel);
     }
 
 
