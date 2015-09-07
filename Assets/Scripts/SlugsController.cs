@@ -37,11 +37,19 @@ public class SlugsController : MonoBehaviour
 
     public void OnCollisionEnter2D(Collision2D collision)
     {
-        if (collision.gameObject.tag == "Player")
+        if (collision.gameObject.tag == "Player") // Die
         {
+            PlayerController.Instance.touchGround = true;
             PlayerController.Instance.alive = false;
         }
     }
 
-
+    public void OnTriggerEnter2D(Collider2D collision)
+    {
+        if (collision.gameObject.tag == "Attack")
+        {
+            gameObject.GetComponent<Rigidbody2D>().AddForce(new Vector2(100, 100));
+            gameObject.GetComponent<BoxCollider2D>().isTrigger = true;
+        }
+    }
 }

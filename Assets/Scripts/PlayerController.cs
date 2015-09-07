@@ -1,10 +1,13 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System;
+using UnityEditor;
+
 public class PlayerController : MonoBehaviour
 {
     private float speed = 1f;
     private Rigidbody2D mrigidbody;
-    private bool touchGround = true;
+    public bool touchGround = true;
     public bool alive = true;
     private Animator animator;
     public static PlayerController Instance;
@@ -31,9 +34,9 @@ public class PlayerController : MonoBehaviour
         PayerWalk();
         if (!alive) //Die
         {
-            gameObject.GetComponent<BoxCollider2D>().isTrigger = true;
             PlayerJump();
-            //StartCoroutine(restart());
+            gameObject.GetComponent<BoxCollider2D>().isTrigger = true;
+            StartCoroutine(restart());
         }
 
     }
@@ -46,9 +49,33 @@ public class PlayerController : MonoBehaviour
         {
             PlayerJump();
         }
+        //Atttack
+        if (Input.GetKeyDown(KeyCode.K))
+        {
+            PlayerAttack();
+        }
 
     }
 
+    private void PlayerAttack()
+    {
+        if (alive)
+        {
+            UnityEngine.Object bitrPrefab = AssetDatabase.LoadAssetAtPath("Assets/Prefabs/Bite.prefab", typeof(GameObject));
+            GameObject clone = Instantiate(bitrPrefab, Vector3.zero, Quaternion.identity) as GameObject;
+            clone.transform.position = transform.position + new Vector3(0.06f, 0.02f, 0.0f);
+            animator.SetBool("isAttack", true);
+            StartCoroutine(sleepAttack(clone));
+        }
+
+    }
+
+    private IEnumerator sleepAttack(GameObject clone)
+    {
+        yield return new WaitForSeconds(0.7f);
+        animator.SetBool("isAttack", false);
+        Destroy(clone);
+    }
 
     void OnCollisionEnter2D(Collision2D coll)
     {
@@ -75,6 +102,7 @@ public class PlayerController : MonoBehaviour
         //When touch Enemi
         if (coll.gameObject.tag == "Enemi")
         {
+            touchGround = true;
             alive = false;
             
         }
@@ -136,6 +164,14 @@ public class PlayerController : MonoBehaviour
        // Vector2 direction = MovingGamePad.Instance.getDirection();
         if (moveH != 0.0f)
         {
+            if (moveH > 0)
+            {
+                transform.localScale = new Vector3(1, 1, 1);
+            }
+            else if (moveH < 0)
+            {
+                transform.localScale = new Vector3(-1, 1, 1);
+            }
             animator.SetBool("isWalk", true);
         }
         else
@@ -191,7 +227,7 @@ public class PlayerController : MonoBehaviour
     //Restart
     IEnumerator restart()
     {
-        yield return new WaitForSeconds(1f);
+        yield return new WaitForSeconds(2f);
         Application.LoadLevel(Application.loadedLevel);
     }
 
