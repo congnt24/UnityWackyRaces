@@ -23,6 +23,7 @@ public class AttackController : MonoBehaviour
             collision.gameObject.GetComponent<Rigidbody2D>().AddForce(new Vector2(100, 100));
             collision.collider.isTrigger = true;
             Destroy(gameObject);
+
         }
         if (collision.gameObject.tag == "Ground" || collision.gameObject.tag == "Wall" || collision.gameObject.tag == "DeadLine")
         {
@@ -32,7 +33,7 @@ public class AttackController : MonoBehaviour
     GameObject bang;
     public void OnTriggerEnter2D(Collider2D collision)
     {
-        if (collision.gameObject.tag == "Ground" || collision.gameObject.tag == "Wall" || collision.gameObject.tag == "DeadLine")
+		if (collision.gameObject.tag == "Ground" || collision.gameObject.tag == "Wall" || collision.gameObject.tag == "DeadLine" || collision.gameObject.tag == "Enemi")
         {
             if (BangPrefab != null)
             {

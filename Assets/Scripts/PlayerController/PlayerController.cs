@@ -1,7 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
-using System;
-
+using UnityStandardAssets.CrossPlatformInput;
 public class PlayerController : MonoBehaviour
 {
     private float speed = 1f;
@@ -57,17 +56,17 @@ public class PlayerController : MonoBehaviour
     {
 
         //Jumping
-        if (Input.GetKeyDown(KeyCode.J) || Input.GetKeyDown(KeyCode.Space) || JumpingController.Instance.getBoolJump())
+		if (Input.GetKeyDown (KeyCode.J) || Input.GetKeyDown (KeyCode.Space) || CrossPlatformInputManager.GetButton ("Jump"))
         {
             PlayerJump();
         }
         //Atttack
-        if (Input.GetKeyDown(KeyCode.K) || AttackingController.Instance.getBoolAttack())
+		if (Input.GetKeyDown(KeyCode.K) || CrossPlatformInputManager.GetButton ("Attack"))
         {
             PlayerAttack();
         }
         //Using skill
-        if (Input.GetKeyDown(KeyCode.L))
+		if (Input.GetKeyDown(KeyCode.L) || CrossPlatformInputManager.GetButton ("Select"))
         {
             USingSkill();
         }
@@ -75,6 +74,7 @@ public class PlayerController : MonoBehaviour
 
     private void USingSkill()
     {
+		BoardController.Instance.PickSkillFunc (boneCount);
         boneCount = 0;
     }
 
@@ -252,21 +252,21 @@ public class PlayerController : MonoBehaviour
     //Handle walking of player
     public void PayerWalk()
     {
-
-        if (SystemInfo.deviceType == DeviceType.Desktop)
+		
+		moveH = CrossPlatformInputManager.GetAxis ("Horizontal");
+        /* if (SystemInfo.deviceType == DeviceType.Desktop)
         {
+			moveH = Input.GetAxis ("Horizontal");
+       	}
+       	else
+         {
+       //Debug.Log("move H: "+moveH);
+			//moveH = MoveBack.Instance.getDirection() + MoveForward.Instance.getDirection();
 
-            moveH = Input.GetAxis("Horizontal");
-        }
-        else
-        {
-            //Debug.Log("move H: "+moveH);
-            moveH = MoveBack.Instance.getDirection() + MoveForward.Instance.getDirection();
+         }
+*/
 
-        }
-        
-
-       // Vector2 direction = MovingGamePad.Instance.getDirection();
+        // Vector2 direction = MovingGamePad.Instance.getDirection();
         if (moveH != 0.0f)
         {
             if (moveH > 0)

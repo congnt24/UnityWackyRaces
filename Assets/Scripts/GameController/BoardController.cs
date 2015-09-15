@@ -34,7 +34,7 @@ public class BoardController : MonoBehaviour
         }
     }
 
-    private void PickSkillFunc(int j)
+    public void PickSkillFunc(int j)
     {
         if (j==0)
         {
