@@ -17,23 +17,29 @@ public class SlugsController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-
-        count++;
-        if (count < range)
+        if (!BoardController.Instance.isPause)
         {
-            transform.localScale = new Vector3(-1, 1, 1);
-            speed = -0.15f;
-        }
-        else if (count >= range && count < range*2)
-        {
-            transform.localScale = new Vector3(1, 1, 1);
-            speed = 0.15f;
+            count++;
+            if (count < range)
+            {
+                transform.localScale = new Vector3(-1, 1, 1);
+                speed = -0.15f;
+            }
+            else if (count >= range && count < range * 2)
+            {
+                transform.localScale = new Vector3(1, 1, 1);
+                speed = 0.15f;
+            }
+            else
+            {
+                count = 0;
+            }
+            rigid.velocity = new Vector2(speed, rigid.velocity.y);
         }
         else
         {
-            count = 0;
+            rigid.velocity = Vector2.zero;
         }
-        rigid.velocity = new Vector2(speed, rigid.velocity.y);
     }
 
     public void OnCollisionEnter2D(Collision2D collision)

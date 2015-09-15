@@ -11,26 +11,38 @@ public class BoardController : MonoBehaviour
     public Image[] hearts;
     private float time;
     public static BoardController Instance;
-    public Button pickSkill;
+    public Button pickSkill, btn_back;
+    public GameObject quitDialog;
+    public bool isPause = false;
     // Use this for initialization
     void Start()
     {
         time = Time.time;
         Instance = this;
         pickSkill.onClick.AddListener(()=> PickSkillFunc(PlayerController.Instance.boneCount));
+        btn_back.onClick.AddListener(()=>BackClick());
+    }
+
+    private void BackClick()
+    {
+        
     }
 
     // Update is called once per frame
     void Update()
     {
-        gemCount.text = string.Format("X {0:00}", PlayerController.Instance.gemCount);
-        timeCount.text = "" + (int)(180 - (Time.time - time));
-        lifesCount.text = string.Format("X {0:00}", PlayerController.Instance.lifeCount);
-        showBone(PlayerController.Instance.boneCount);
-        Showheart();
-        if (Input.GetKeyDown(KeyCode.S))
+        if (!isPause)
         {
-            PickSkillFunc(PlayerController.Instance.boneCount);
+            gemCount.text = string.Format("X {0:00}", PlayerController.Instance.gemCount);
+            timeCount.text = "" + (int)(180 - (Time.time - time));
+            lifesCount.text = string.Format("X {0:00}", PlayerController.Instance.lifeCount);
+            showBone(PlayerController.Instance.boneCount);
+            Showheart();
+            if (Input.GetKeyDown(KeyCode.S))
+            {
+                PickSkillFunc(PlayerController.Instance.boneCount);
+            }
+
         }
     }
 

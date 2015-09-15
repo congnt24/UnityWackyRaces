@@ -41,34 +41,37 @@ public class PlayerController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        //Movement
-        PayerWalk();
-        if (!alive) //Die
-        {
-            PlayerJump();
-            gameObject.GetComponent<BoxCollider2D>().isTrigger = true;
-            StartCoroutine(restart());
-        }
+        
 
     }
 
     void FixedUpdate()
     {
-
-        //Jumping
-		if (Input.GetKeyDown (KeyCode.J) || Input.GetKeyDown (KeyCode.Space) || CrossPlatformInputManager.GetButton ("Jump"))
+        if (!BoardController.Instance.isPause)
         {
-            PlayerJump();
-        }
-        //Atttack
-		if (Input.GetKeyDown(KeyCode.K) || CrossPlatformInputManager.GetButton ("Attack"))
-        {
-            PlayerAttack();
-        }
-        //Using skill
-		if (Input.GetKeyDown(KeyCode.L) || CrossPlatformInputManager.GetButton ("Select"))
-        {
-            USingSkill();
+            //Movement
+            PayerWalk();
+            if (!alive) //Die
+            {
+                PlayerJump();
+                gameObject.GetComponent<BoxCollider2D>().isTrigger = true;
+                StartCoroutine(restart());
+            }
+            //Jumping
+            if (Input.GetKeyDown(KeyCode.J) || Input.GetKeyDown(KeyCode.Space) || CrossPlatformInputManager.GetButton("Jump"))
+            {
+                PlayerJump();
+            }
+            //Atttack
+            if (Input.GetKeyDown(KeyCode.K) || CrossPlatformInputManager.GetButton("Attack"))
+            {
+                PlayerAttack();
+            }
+            //Using skill
+            if (Input.GetKeyDown(KeyCode.L) || CrossPlatformInputManager.GetButton("Select"))
+            {
+                USingSkill();
+            }
         }
     }
 
