@@ -9,11 +9,13 @@ public class BoardController : MonoBehaviour
     public Text gemCount, lifesCount, timeCount;
     public Image[] bones;
     public Image[] hearts;
+    public Image[] slotSkill;
     private float time;
     public static BoardController Instance;
     public Button pickSkill, btn_back;
     public GameObject quitDialog;
     public bool isPause = false;
+    int leftTime;
     // Use this for initialization
     void Start()
     {
@@ -34,7 +36,16 @@ public class BoardController : MonoBehaviour
         if (!isPause)
         {
             gemCount.text = string.Format("X {0:00}", PlayerController.Instance.gemCount);
-            timeCount.text = "" + (int)(180 - (Time.time - time));
+            leftTime = (int)(180 - (Time.time - time));
+            if (leftTime>0)
+            {
+                timeCount.text = "" + leftTime;
+            }
+            else
+            {
+                timeCount.text = "0";
+                PlayerController.Instance.Dead();
+            }
             lifesCount.text = string.Format("X {0:00}", PlayerController.Instance.lifeCount);
             showBone(PlayerController.Instance.boneCount);
             Showheart();
@@ -61,12 +72,30 @@ public class BoardController : MonoBehaviour
             }
             return;
         }
-        if (j == 4)
+        if (j == 3)
         {
             Debug.Log("You can fly");
-            return;
+        }
+        if (j==3 || j==2 || j==1)
+        {
+            showSlot(j-1);
         }
         PlayerController.Instance.skillNum = j;
+    }
+
+    public void showSlot(int j)
+    {
+        for (int i = 0; i < slotSkill.Length; i++)
+        {
+            if (i==j)
+            {
+                slotSkill[i].gameObject.SetActive(true);
+            }
+            else
+            {
+                slotSkill[i].gameObject.SetActive(false);
+            }
+        }
     }
 
     private void showBone(int j)
@@ -81,6 +110,7 @@ public class BoardController : MonoBehaviour
             if (i==j-1)
             {
                 bones[i].gameObject.SetActive(true);
+
             }
             else
             {

@@ -19,7 +19,10 @@ public class RoofController : MonoBehaviour
 
     public void OnTriggerEnter2D(Collider2D collider)
     {
-        collider.isTrigger = true;
+        if (collider.gameObject.tag == "Player")
+        {
+            collider.isTrigger = true;
+        }
     }
     public void OnTriggerExit2D(Collider2D collider)
     {

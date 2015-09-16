@@ -1,6 +1,8 @@
 ﻿using UnityEngine;
 using System.Collections;
 using UnityStandardAssets.CrossPlatformInput;
+using System;
+
 public class PlayerController : MonoBehaviour
 {
     private float speed = 1f;
@@ -15,6 +17,7 @@ public class PlayerController : MonoBehaviour
     public int gemCount, lifeCount, boneCount;//Counting the number of gem, bone, life are collected by Player
     public int skillNum;    //Wich skill will be used by Player
     public int hearthCount;//Number of heart
+    private int jumpCount = 0;
 
 
     private float nextBombTime, durationBomb=0.5f;
@@ -41,8 +44,40 @@ public class PlayerController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        
-
+        if (skillNum == 3)
+        {
+            if (!touchGround)
+            {
+            
+                if (mrigidbody.velocity.y < 0)
+                {
+                    if (mrigidbody.velocity.y < -0.05f)
+                    {
+                        if (jumpCount == 1)
+                        {
+                            animator.Play("Fly");
+                            mrigidbody.velocity *= 0.75f;
+                        }
+                    }
+                    else
+                    {
+                        //jumpCount = 0;
+                    }
+                }
+                else
+                {
+                    jumpCount = 0;
+                    animator.Play("Idle");
+                }
+            }
+            else
+            {
+                if (jumpCount==1)
+                {
+                    animator.Play("Idle");
+                }
+            }
+        }
     }
 
     void FixedUpdate()
@@ -55,7 +90,15 @@ public class PlayerController : MonoBehaviour
             {
                 PlayerJump();
                 gameObject.GetComponent<BoxCollider2D>().isTrigger = true;
-                StartCoroutine(restart());
+                if (lifeCount>0)
+                {
+                    StartCoroutine(restart());
+                }
+                else//lifeCount ==0
+                {
+                    //GameOver
+                    StartCoroutine(GameOver());
+                }
             }
             //Jumping
             if (Input.GetKeyDown(KeyCode.J) || Input.GetKeyDown(KeyCode.Space) || CrossPlatformInputManager.GetButton("Jump"))
@@ -75,6 +118,13 @@ public class PlayerController : MonoBehaviour
         }
     }
 
+    private IEnumerator GameOver()
+    {
+        yield return new WaitForSeconds(2f);
+        Application.LoadLevel("Menu");
+        
+    }
+
     private void USingSkill()
     {
 		BoardController.Instance.PickSkillFunc (boneCount);
@@ -89,16 +139,19 @@ public class PlayerController : MonoBehaviour
         {
             Debug.Log("Skill:" + skillNum);
             GameObject clone=null;
-            if (skillNum==0 || skillNum ==3 || skillNum ==4)//Bite
+            if (skillNum==0 || skillNum ==4)//Bite
             {
+                if (Time.time - nextBombTime >= durationBomb)
+                {
+                    nextBombTime = Time.time;
+                    //UnityEngine.Object bitrPrefab = AssetDatabase.LoadAssetAtPath("Assets/Prefabs/Bite.prefab", typeof(GameObject));
+                    clone = Instantiate(bitePrefab, Vector3.zero, Quaternion.identity) as GameObject;
+                    clone.transform.position = transform.position + new Vector3(0.06f * gameObject.transform.localScale.x, 0.02f, 0.0f);
 
-                //UnityEngine.Object bitrPrefab = AssetDatabase.LoadAssetAtPath("Assets/Prefabs/Bite.prefab", typeof(GameObject));
-                clone = Instantiate(bitePrefab, Vector3.zero, Quaternion.identity) as GameObject;
-                clone.transform.position = transform.position + new Vector3(0.06f * gameObject.transform.localScale.x, 0.02f, 0.0f);
-
-                //animator.SetBool("isAttack", true);
-                animator.Play("Bite");
-                StartCoroutine(sleepAttack(clone));
+                    //animator.SetBool("isAttack", true);
+                    animator.Play("Bite");
+                    StartCoroutine(sleepAttack(clone));
+                }
             }
             else if (skillNum == 1)//Through Bomb
             {
@@ -189,18 +242,23 @@ public class PlayerController : MonoBehaviour
             if (Time.time - nextDieTime >= durationDie)
             {
                 nextDieTime = Time.time;
-                gameObject.layer = LayerMask.NameToLayer("player");
-                coll.gameObject.layer = LayerMask.NameToLayer("monster");
+                gameObject.layer = LayerMask.NameToLayer("Player");
+                coll.gameObject.layer = LayerMask.NameToLayer("Enemi");
                 animator.Play("LoseHeart");
                 StartCoroutine(Sleep1Second(coll.gameObject));
                 if (--hearthCount == 0)
                 {
-                    touchGround = true;
-                    alive = false;
+                    animator.Play("Die");
+                    Dead();
                 }
             }
-            
         }
+    }
+
+    public void Dead()
+    {
+        touchGround = true;
+        alive = false;
     }
 
     private IEnumerator Sleep1Second(GameObject coll)
@@ -248,7 +306,17 @@ public class PlayerController : MonoBehaviour
             
             Destroy(other.gameObject);
         }
-
+        if (other.gameObject.tag == "BulletEnemi")
+        {
+            
+                animator.Play("LoseHeart");
+                if (--hearthCount == 0)
+            {
+                animator.Play("Die");
+                Dead();
+                }
+            Destroy(other.gameObject);
+        }
     }
 
 
@@ -293,7 +361,11 @@ public class PlayerController : MonoBehaviour
     //Handle jumpping of player
     public void PlayerJump()
     {
-        if (Time.time > nextJump)
+        if (mrigidbody.velocity.y < -0.01)
+        {
+            jumpCount = 1;
+        }
+            if (Time.time > nextJump)
         {
             nextJump = Time.time + 0.2f;
         if (touchGround)
@@ -303,6 +375,10 @@ public class PlayerController : MonoBehaviour
                 mrigidbody.AddForce(Vector2.up * 140);
             }
 
+        }
+        else
+        {
+            
         }
     }
 
@@ -337,6 +413,7 @@ public class PlayerController : MonoBehaviour
     IEnumerator restart()
     {
         yield return new WaitForSeconds(2f);
+        lifeCount--;
         Application.LoadLevel(Application.loadedLevel);
     }
 

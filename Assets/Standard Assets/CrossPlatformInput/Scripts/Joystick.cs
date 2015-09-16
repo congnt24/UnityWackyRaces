@@ -47,7 +47,7 @@ namespace UnityStandardAssets.CrossPlatformInput
 			if (m_UseX)
 			{
 				m_HorizontalVirtualAxis.Update(-delta.x);
-                Debug.Log("Value: " + value + ", Start: " + origin);
+                //Debug.Log("Value: " + value + ", Start: " + origin);
             }
 
 			if (m_UseY)
@@ -95,7 +95,7 @@ namespace UnityStandardAssets.CrossPlatformInput
 			}
             //transform.position = (Vector3.ClampMagnitude(new Vector3(newPos.x, newPos.y, 0), MovementRange)+m_StartPos);
             rectTransform.anchoredPosition = new Vector2(newPos.x , newPos.y);
-            Debug.Log("Position: "+ rectTransform.anchoredPosition);
+            //Debug.Log("Position: "+ rectTransform.anchoredPosition);
 			UpdateVirtualAxes(rectTransform.anchoredPosition);
 		}
 
@@ -109,7 +109,7 @@ namespace UnityStandardAssets.CrossPlatformInput
 
 		public void OnPointerDown(PointerEventData data) {
             m_StartPos = data.position;
-            Debug.Log("Dn: " + data.position+" "+ rectTransform.anchoredPosition);
+            //Debug.Log("Dn: " + data.position+" "+ rectTransform.anchoredPosition);
         }
 
 		void OnDisable()
