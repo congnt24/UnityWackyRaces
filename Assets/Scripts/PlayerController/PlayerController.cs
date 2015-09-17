@@ -18,6 +18,7 @@ public class PlayerController : MonoBehaviour
     public int skillNum;    //Wich skill will be used by Player
     public int hearthCount;//Number of heart
     private int jumpCount = 0;
+    public bool canFly;
 
 
     private float nextBombTime, durationBomb=0.5f;
@@ -44,7 +45,7 @@ public class PlayerController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (skillNum == 3)
+        if (canFly)
         {
             if (!touchGround)
             {
@@ -106,7 +107,7 @@ public class PlayerController : MonoBehaviour
                 PlayerJump();
             }
             //Atttack
-            if (Input.GetKeyDown(KeyCode.K) || CrossPlatformInputManager.GetButton("Attack"))
+            if (Input.GetKeyDown(KeyCode.A) || CrossPlatformInputManager.GetButton("Attack"))
             {
                 PlayerAttack();
             }
@@ -137,7 +138,7 @@ public class PlayerController : MonoBehaviour
     {
         if (alive)
         {
-            Debug.Log("Skill:" + skillNum);
+            
             GameObject clone=null;
             if (skillNum==0 || skillNum ==4)//Bite
             {

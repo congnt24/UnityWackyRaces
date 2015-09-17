@@ -41,6 +41,10 @@ public class AttackController : MonoBehaviour
                 bang.transform.position = gameObject.transform.position;
                 Destroy(gameObject);
             }
+            else
+            {
+                //Destroy(collision.gameObject);
+            }
         }
     }
     

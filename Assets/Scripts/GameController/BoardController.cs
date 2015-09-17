@@ -74,18 +74,20 @@ public class BoardController : MonoBehaviour
         }
         if (j == 3)
         {
+            PlayerController.Instance.canFly = true;
+            slotSkill[2].gameObject.SetActive(true);
             Debug.Log("You can fly");
         }
-        if (j==3 || j==2 || j==1)
+        if (j==2 || j==1)
         {
             showSlot(j-1);
+            PlayerController.Instance.skillNum = j;
         }
-        PlayerController.Instance.skillNum = j;
     }
 
     public void showSlot(int j)
     {
-        for (int i = 0; i < slotSkill.Length; i++)
+        for (int i = 0; i < 2; i++)
         {
             if (i==j)
             {
