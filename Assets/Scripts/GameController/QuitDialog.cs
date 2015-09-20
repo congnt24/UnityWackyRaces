@@ -4,8 +4,10 @@ using UnityEngine.UI;
 using System;
 
 public class QuitDialog : MonoBehaviour {
+    public static QuitDialog Instance;
     public Button btn_back, btn_y, btn_no;
     Animator anim;
+    public string name;
 	// Use this for initialization
 	void Start ()
     {
@@ -13,28 +15,46 @@ public class QuitDialog : MonoBehaviour {
         btn_y.onClick.AddListener(() => YClick());
         btn_no.onClick.AddListener(() => NClick());
         anim = GetComponent<Animator>();
-        
+        Instance = this;
+
     }
 
     private void NClick()
     {
-
         anim.Play("DiableDialog");
-        BoardController.Instance.isPause = false;
+        if (name.Equals("Quit"))
+        {
+            BoardController.Instance.isPause = false;
+        }
+        else if (name.Equals("Gameover"))
+        {
+            Application.LoadLevel("Menu");
+        }
     }
 
     private void YClick()
     {
-        Application.LoadLevel("Menu");
+        if (name.Equals("Quit"))
+        {
+            Application.LoadLevel("Menu");
+        }
+        else if (name.Equals("Gameover"))
+        {
+            Application.LoadLevel(Application.loadedLevel);
+        }
     }
 
     private void BackClick()
     {
-        anim.Play("QuitDialog");
-        BoardController.Instance.isPause = true;
+        showDialog("Quit");
     }
 
-    // Update is called once per frame
-    void Update () {
+    public void showDialog(string name2)
+    {
+        BoardController.Instance.isPause = true;
+        if (name == name2)
+        {
+            anim.Play("QuitDialog");
+        }
     }
 }
