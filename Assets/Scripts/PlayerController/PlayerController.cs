@@ -19,6 +19,7 @@ public class PlayerController : MonoBehaviour
     public int hearthCount;//Number of heart
     private int jumpCount = 0;
     public bool canFly;
+    public Animator gameoverDialog, winDialog;
 
 
     private float nextBombTime, durationBomb=0.5f;
@@ -114,6 +115,7 @@ public class PlayerController : MonoBehaviour
     {
         BoardController.Instance.isPause = true;
         mrigidbody.velocity = Vector3.zero;
+        transform.localScale = Vector3.one * 0.345f;
         animator.Play("Die");
         yield return new WaitForSeconds(0.5f);
         PlayerJump();
@@ -129,12 +131,6 @@ public class PlayerController : MonoBehaviour
         }
     }
 
-    private IEnumerator GameOver()
-    {
-        yield return new WaitForSeconds(2f);
-        Application.LoadLevel("Menu");
-        
-    }
 
     private void USingSkill()
     {
@@ -227,6 +223,12 @@ public class PlayerController : MonoBehaviour
 
     void OnCollisionEnter2D(Collision2D coll)
     {
+        //WIn 
+        if (coll.gameObject.tag == "EndGame")
+        {
+            BoardController.Instance.isPause = true;
+            winDialog.Play("QuitDialog");
+        }
 
         if (coll.gameObject.tag == "Ground")
         {
@@ -350,7 +352,6 @@ public class PlayerController : MonoBehaviour
 */
 
         // Vector2 direction = MovingGamePad.Instance.getDirection();
-        //Debug.Log("moveH: "+moveH+" LOCAL SCALE: "+transform.localScale);
         if (moveH != 0.0f)
         {
             if (moveH > 0)
@@ -429,6 +430,13 @@ public class PlayerController : MonoBehaviour
         lifeCount--;
         Application.LoadLevel(Application.loadedLevel);
     }
+    //Gameover
+    private IEnumerator GameOver()
+    {
+        BoardController.Instance.isPause = true;
+        gameoverDialog.Play("QuitDialog");
+        yield return new WaitForSeconds(1f);
 
+    }
 
 }
