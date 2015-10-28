@@ -2,7 +2,12 @@
 using System.Collections;
 using UnityStandardAssets.CrossPlatformInput;
 using System;
-
+/// <summary>
+/// This class is assigned for player
+/// It will handle all activity of player include: Moving: Walk, Jump and Fly
+/// All Attcking: Bite, Throw Bomb, Shot bullet
+/// 
+/// </summary>
 public class PlayerController : MonoBehaviour
 {
     private float speed = 1f;
@@ -13,17 +18,13 @@ public class PlayerController : MonoBehaviour
     public static PlayerController Instance;    //Just for Singleton Pattern
     public float moveH; //Moving of player [(0, 1]
     private float nextJump; //Duration time of 2 jump
-
     public int gemCount, lifeCount, boneCount;//Counting the number of gem, bone, life are collected by Player
     public int skillNum;    //Wich skill will be used by Player
     public int hearthCount;//Number of heart
     private int jumpCount = 0;
     public bool canFly;
     public Animator gameoverDialog, winDialog;
-
-
     private float nextBombTime, durationBomb=0.5f;
-
     private float nextDieTime, durationDie = 1f;
     public  GameObject bitePrefab, bombPrefab, bulletPrefab;
 

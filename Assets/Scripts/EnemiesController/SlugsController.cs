@@ -14,6 +14,7 @@ public class SlugsController : MonoBehaviour
     private float batPost;
     public GameObject FlowerBullet;
     private bool flowerShoot=false;
+    private bool isAlive = true;
 
 
     public GameObject orgin;
@@ -132,10 +133,12 @@ public class SlugsController : MonoBehaviour
     private IEnumerator FlowerShoot()
     {
         flowerShoot = true;
-
-        yield return new WaitForSeconds(1);
-        Instantiate(FlowerBullet, transform.position, Quaternion.identity);
-        yield return new WaitForSeconds(10);
+        yield return new WaitForSeconds(1.5f);
+        if (transform.gameObject.activeSelf)
+        {
+            Instantiate(FlowerBullet, transform.position, Quaternion.identity);
+        }
+        yield return new WaitForSeconds(15);
         //flowerShoot = false;
     }
 
